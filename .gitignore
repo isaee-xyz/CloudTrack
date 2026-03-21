@@ -1,0 +1,13 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Firebase / Secrets — DO NOT COMMIT YOUR OWN google-services.json
+app/google-services.json

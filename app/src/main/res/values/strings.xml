@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">CloudTrack</string>
+    <string name="app_subtitle">Secure Call Syncing &amp; Recording</string>
+    <string name="setup_required">Setup Required</string>
+    <string name="setup_desc">To begin silently logging and recording your PSTN and WhatsApp calls, Android requires the following system permissions to be granted.</string>
+    <string name="btn_enable_core">Enable Core Tracking</string>
+    <string name="btn_enable_wa">Enable WhatsApp Tracking</string>
+    <string name="footer_security">Your data is encrypted and securely sent to your private Firebase vault.</string>
+    <string name="desc_security_icon">Security Shield Icon</string>
+</resources>

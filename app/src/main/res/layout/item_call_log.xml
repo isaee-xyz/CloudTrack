@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#E0E0E0"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/ivCallType"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:tint="#363636"
+                tools:src="@android:drawable/sym_call_incoming" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvContactName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="John Doe"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#111827" />
+
+                <TextView
+                    android:id="@+id/tvPhoneNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="+1 (555) 123-4567"
+                    android:textSize="14sp"
+                    android:textColor="#6B7280" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="14s"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#E96186" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            tools:text="Mar 22, 2026 - 10:30 AM"
+            android:textSize="12sp"
+            android:textColor="#9CA3AF" />
+
+        <!-- Audio Player Block -->
+        <LinearLayout
+            android:id="@+id/layoutAudioPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="#F3F4F6"
+            android:padding="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/btnPlayPause"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="#E96186" />
+
+            <!-- We will simply use a generic progress bar if no true generic seekbar functionality is built, leaving Seekbar for visual presence -->
+            <SeekBar
+                android:id="@+id/audioSeekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:progressTint="#E96186"
+                android:thumbTint="#E96186" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
