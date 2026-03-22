@@ -38,8 +38,13 @@ object FirebaseManager {
                 "durationSeconds" to call.durationSeconds,
                 "platform" to call.platform,
                 "callType" to call.callType,
-                "simId" to call.simId,
-                "dialedNumber" to call.dialedNumber
+                "userCountryCode" to call.userCountryCode,
+                "userNumber" to call.userNumber,
+                "customerCountryCode" to call.customerCountryCode,
+                "customerNumber" to call.customerNumber,
+                "dialCountryCode" to call.dialCountryCode,
+                "dialNumber" to call.dialNumber,
+                "simId" to call.simId
             )
 
             // Step 1: Upload Audio if exists

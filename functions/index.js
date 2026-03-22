@@ -6,7 +6,7 @@ const axios = require("axios");
 
 initializeApp();
 const db = getFirestore("cloudtrack");
-const bucket = getStorage().bucket(); // Default Storage bucket
+const bucket = getStorage().bucket(); 
 
 // Configuration
 const LSQ_ACCESS_KEY = process.env.LSQ_ACCESS_KEY;
@@ -28,10 +28,12 @@ exports.synccalltoleadsquared = onDocumentCreated({
         return;
     }
 
-    console.log(`Processing New Call Log (v2) on database 'cloudtrack': ${docId}`);
+    console.log(`Processing New Call Log: ${docId}`);
 
-    // Formatting: +91-9610002444
-    const phone = `${data.countryCode}-${data.phoneNumber}`;
+    // Prioritize customer fields for LSQ search
+    const countryCode = data.customerCountryCode || data.countryCode || "";
+    const phoneNumber = data.customerNumber || data.phoneNumber || "";
+    const phone = `${countryCode}-${phoneNumber}`;
     
     try {
       // Step 1: Retrieve Lead by Phone Number
@@ -47,49 +49,55 @@ exports.synccalltoleadsquared = onDocumentCreated({
       if (!leads || leads.length === 0) {
         console.log(`No lead found in LSQ for phone: ${phone}. Cleaning up...`);
         
-        // 1. Delete Audio from Storage if it exists
+        // Purge if unknown
         if (data.audioDownloadUrl) {
             try {
-                // Extract filename from URL (e.g., call_recordings%2Ffile.m4a)
-                const pathParts = new URL(data.audioDownloadUrl).pathname.split("/o/")[1];
+                const url = new URL(data.audioDownloadUrl);
+                const pathParts = url.pathname.split("/o/")[1];
                 const filePath = decodeURIComponent(pathParts.split("?")[0]);
                 await bucket.file(filePath).delete();
                 console.log(`Deleted storage file: ${filePath}`);
             } catch (err) {
-                console.warn(`Failed to delete storage file (maybe already gone?): ${err.message}`);
+                console.warn(`Failed to delete storage file: ${err.message}`);
             }
         }
-
-        // 2. Delete Firestore Document
         await db.collection("call_logs").doc(docId).delete();
-        console.log(`Successfully purged log and recording for unknown number: ${phone}`);
+        console.log(`Purged log for unknown number: ${phone}`);
         return;
       }
 
       const prospectId = leads[0].ProspectID;
       console.log(`Found Lead: ${prospectId} for ${phone}`);
 
-      // Step 2: Format Timestamps to UTC (Subtracting 5:30 hours from IST)
-      const formatToUtc = (istTimestamp) => {
-        const utcDate = new Date(istTimestamp - 19800000);
-        return utcDate.toISOString().replace("T", " ").substring(0, 19);
+      // Formatting (Assuming Android gives UTC/Raw Epoch)
+      const formatToLsqDate = (timestamp) => {
+        if (!timestamp) return "";
+        const date = new Date(timestamp);
+        return date.toISOString().replace("T", " ").substring(0, 19);
       };
 
-      const startTimeUtc = formatToUtc(data.startTime);
-      const endTimeUtc = formatToUtc(data.endTime);
+      const startTimeFormatted = formatToLsqDate(data.startTime);
+      const endTimeFormatted = formatToLsqDate(data.endTime);
 
       // Step 3: Create Activity in LeadSquared
       const createActivityUrl = `${LSQ_BASE_URL}/ProspectActivity.svc/Create`;
+      
+      // Build detailed note
+      let note = `Call via CloudTrack [${data.platform || "PSTN"}]\n`;
+      note += `User: ${data.userCountryCode || ""}${data.userNumber || ""}\n`;
+      note += `Customer: ${data.customerCountryCode || ""}${data.customerNumber || ""}\n`;
+      note += `Recording Link: ${data.audioDownloadUrl || "No recording available"}`;
+
       const activityPayload = {
         RelatedProspectId: prospectId,
         ActivityEvent: 278,
-        ActivityNote: `Call from Mobile. Audio Link: ${data.audioDownloadUrl || "No recording"}`,
+        ActivityNote: note,
         ProcessFilesAsync: true,
-        ActivityDateTime: endTimeUtc,
+        ActivityDateTime: endTimeFormatted,
         Fields: [
-          { SchemaName: "mx_Custom_1", Value: "Recording Available" },
-          { SchemaName: "mx_Custom_2", Value: startTimeUtc },
-          { SchemaName: "mx_Custom_3", Value: endTimeUtc },
+          { SchemaName: "mx_Custom_1", Value: data.audioDownloadUrl ? "Recording Available" : "No Recording" },
+          { SchemaName: "mx_Custom_2", Value: startTimeFormatted },
+          { SchemaName: "mx_Custom_3", Value: endTimeFormatted },
           { SchemaName: "mx_Custom_4", Value: (data.durationSeconds || 0).toString() },
           { SchemaName: "mx_Custom_5", Value: data.callType || "" },
         ],
@@ -105,7 +113,6 @@ exports.synccalltoleadsquared = onDocumentCreated({
 
       console.log("Activity Posted to LeadSquared Successfully:", activityResponse.data);
       
-      // Update Sync Status in Firestore
       return db.collection("call_logs").doc(docId).update({ lsqSyncStatus: "SUCCESS", lsqProspectId: prospectId });
       
     } catch (error) {

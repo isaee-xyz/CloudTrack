@@ -14,8 +14,14 @@ data class CallDataEntity(
     val durationSeconds: Int,
     val platform: String, // "PSTN" or "WhatsApp"
     val callType: String, // "INCOMING", "OUTGOING", "MISSED"
-    val simId: String?, // Only applies to PSTN
-    val dialedNumber: String?, // The local SIM number from which the call was made
+    val userCountryCode: String?,
+    val userNumber: String?,
+    val customerCountryCode: String?,
+    val customerNumber: String?,
+    val dialCountryCode: String?, 
+    val dialNumber: String?,      
+    val simId: String?, 
     val audioFilePath: String?,
-    val syncStatus: String // "PENDING", "SYNCED", "FAILED"
+    val syncStatus: String, 
+    val isSyncingToLSQ: Boolean = false
 )

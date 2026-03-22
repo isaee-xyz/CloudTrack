@@ -107,31 +107,26 @@ object CallLogObserver {
                         Logger.log(context, TAG, "📞 Attaching Audio Recording to Call: $finalAudioPath")
                     }
 
-                    val (finalCountryCode, finalNationalNumber) = when {
-                        number.startsWith("+971") -> "+971" to number.substring(4)
-                        number.startsWith("+91") -> "+91" to number.substring(3)
-                        number.startsWith("+") -> {
-                            // HEURISTIC: First 1-3 digits are usually the code.
-                            if (number.length > 10) number.substring(0, 3) to number.substring(3)
-                            else number.substring(0, 2) to number.substring(2)
-                        }
-                        else -> {
-                            val defaultCode = if (countryIso == "AE") "+971" else if (countryIso == "IN") "+91" else null
-                            defaultCode to number
-                        }
-                    }
+
+                    val (userCC, userNN) = splitNumber(dialedNum, context)
+                    val (custCC, custNN) = splitNumber(number, context)
 
                     val entity = CallDataEntity(
                         contactName = name ?: "Unknown",
-                        phoneNumber = finalNationalNumber,
-                        countryCode = finalCountryCode,
+                        phoneNumber = custNN,
+                        countryCode = custCC,
                         startTime = date,
                         endTime = date + (duration * 1000L),
                         durationSeconds = duration,
                         platform = "PSTN",
                         callType = typeStr,
+                        userCountryCode = userCC,
+                        userNumber = userNN,
+                        customerCountryCode = custCC,
+                        customerNumber = custNN,
+                        dialCountryCode = userCC,
+                        dialNumber = userNN,
                         simId = simName,
-                        dialedNumber = dialedNum,
                         audioFilePath = finalAudioPath,
                         syncStatus = "PENDING"
                     )
@@ -179,5 +174,24 @@ object CallLogObserver {
             }
         }
         return null
+    }
+
+    private fun splitNumber(number: String?, context: Context): Pair<String?, String?> {
+        if (number == null) return null to null
+        val cleaned = number.replace(" ", "").replace("-", "")
+        return when {
+            cleaned.startsWith("+971") -> "+971" to cleaned.substring(4)
+            cleaned.startsWith("+91") -> "+91" to cleaned.substring(3)
+            cleaned.startsWith("+") -> {
+                if (cleaned.length > 10) cleaned.substring(0, 3) to cleaned.substring(3)
+                else cleaned.substring(0, 2) to cleaned.substring(2)
+            }
+            else -> {
+                val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as android.telephony.TelephonyManager
+                val countryIso = telephonyManager.networkCountryIso?.uppercase() ?: "AE"
+                val defaultCode = if (countryIso == "AE") "+971" else if (countryIso == "IN") "+91" else null
+                defaultCode to cleaned
+            }
+        }
     }
 }

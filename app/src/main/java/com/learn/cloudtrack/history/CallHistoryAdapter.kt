@@ -71,7 +71,7 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
         )
 
         val simLabel = call.simId ?: "SIM Unknown"
-        val dialedText = if (call.dialedNumber != null) " (${call.dialedNumber})" else ""
+        val dialedText = if (call.dialNumber != null) " (${call.dialNumber})" else ""
         holder.tvSimInfo.text = "Source: $simLabel$dialedText"
 
         val audioUrl = call.audioFilePath // This now contains the Firestore URL

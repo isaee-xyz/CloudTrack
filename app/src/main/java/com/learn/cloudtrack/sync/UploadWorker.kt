@@ -25,6 +25,14 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Corout
 
             var allSuccess = true
             for (call in pendingCalls) {
+                if (call.isSyncingToLSQ) {
+                    Logger.log(applicationContext, TAG, "Skip: Call ${call.id} already syncing.")
+                    continue
+                }
+
+                // Lock for sync
+                dao.updateSyncingToLSQ(call.id, true)
+
                 Logger.log(applicationContext, TAG, "Attempting Firebase Sync for Call ID: ${call.id}")
                 val success = FirebaseManager.syncCallData(applicationContext, call)
                 
@@ -33,6 +41,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) : Corout
                     Logger.log(applicationContext, TAG, "SUCCESS ✅ Uploaded Call ${call.id} to Cloud!")
                 } else {
                     allSuccess = false
+                    dao.updateSyncingToLSQ(call.id, false) // Unlock on failure
                     Logger.log(applicationContext, TAG, "FAILED ❌ Could not upload Call ${call.id}.")
                 }
             }

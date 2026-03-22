@@ -59,7 +59,7 @@ class CallHistoryActivity : AppCompatActivity() {
                         try {
                             // Map Firestore doc to Entity
                             val entity = CallDataEntity(
-                                id = 0, // Not used for UI
+                                id = 0, 
                                 contactName = doc.getString("contactName"),
                                 phoneNumber = doc.getString("phoneNumber"),
                                 countryCode = doc.getString("countryCode"),
@@ -68,9 +68,14 @@ class CallHistoryActivity : AppCompatActivity() {
                                 durationSeconds = doc.getLong("durationSeconds")?.toInt() ?: 0,
                                 platform = doc.getString("platform") ?: "PSTN",
                                 callType = doc.getString("callType") ?: "UNKNOWN",
+                                userCountryCode = doc.getString("userCountryCode"),
+                                userNumber = doc.getString("userNumber"),
+                                customerCountryCode = doc.getString("customerCountryCode"),
+                                customerNumber = doc.getString("customerNumber"),
+                                dialCountryCode = doc.getString("dialCountryCode"),
+                                dialNumber = doc.getString("dialNumber"),
                                 simId = doc.getString("simId"),
-                                dialedNumber = doc.getString("dialedNumber"),
-                                audioFilePath = doc.getString("audioDownloadUrl"), // Using URL as the 'path' for the adapter
+                                audioFilePath = doc.getString("audioDownloadUrl"),
                                 syncStatus = "SYNCED"
                             )
                             calls.add(entity)

@@ -22,4 +22,7 @@ interface CallDataDao {
 
     @Query("UPDATE call_logs SET syncStatus = :status WHERE id = :callId")
     suspend fun updateSyncStatus(callId: Int, status: String)
+
+    @Query("UPDATE call_logs SET isSyncingToLSQ = :isSyncing WHERE id = :callId")
+    suspend fun updateSyncingToLSQ(callId: Int, isSyncing: Boolean)
 }
