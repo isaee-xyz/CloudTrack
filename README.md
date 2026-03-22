@@ -6,6 +6,8 @@
 - **Smart PSTN Tracking**: Records calls, durations, and caller IDs automatically.
 - **WhatsApp Support**: Syncs WhatsApp and WhatsApp Business calls via notification listening.
 - **Cloud Vault**: High-quality audio recordings are stored securely in the cloud.
+- **App Owner Profile**: Manual phone number verification to bypass SIM detection unreliability.
+- **Lead-Owner Sync**: Advanced verification ensures activities are only posted for authorized lead owners in LeadSquared.
 - **Privacy First**: Automated cleanup policy deletes personal calls (non-leads) instantly.
 - **SIM Tracking**: Support for dual-SIM devices with automatic detection of the dialed number.
 - **Real-time History**: Stream call recordings and metadata directly from the cloud.

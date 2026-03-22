@@ -5,33 +5,28 @@ CloudTrack is a distributed system consisting of an **Android Agent** and a **Fi
 ## System Flow
 ```mermaid
 graph TD
-    A[Android Phone] -->|Capture Call| B(Foreground Service)
-    B -->|Fallback| C[Internal PCM Recorder]
-    A -->|System Recorder| D[Native OEM Folder]
-    D -->|Detection| E[OEMFolderHelper]
-    E -->|Prioritize| F[CallLogObserver]
-    F -->|Store Metadata| G[(Room DB)]
+    A[Android Phone] -->|Capture| B(App Owner Profile)
+    B -->|Verify Number| C[CallLogObserver]
+    C -->|Store| G[(Room DB V6)]
     G -->|Trigger Sync| H[Upload Worker]
-    H -->|Audio| I[Firebase Storage]
-    H -->|Metadata| J[Firestore]
-    J -->|Trigger| K[Cloud Function]
-    K -->|Check Lead| L[LeadSquared CRM]
-    L -->|Valid Lead?| M{Decision}
-    M -->|Yes| N[Post Activity to CRM]
-    M -->|No| O[Purge Firestore & Storage]
+    H -->|Audio/Metadata| J[Firestore]
+    J -->|Trigger| K[Cloud Function V2]
+    K -->|Retrieve Lead| L[LeadSquared CRM]
+    L -->|Get OwnerID| M[Fetch Owner Profile]
+    M -->|Match PhoneMain?| N{Decision}
+    N -->|Yes| P[Post Activity with OwnerId]
+    N -->|No| O[Purge Log & Audio Assets]
 ```
 
 ## Component Breakdown
 
 ### 📱 Android Application
-- **CallLogObserver**: Monitors system call logs. It uses **OEMFolderHelper** to scan manufacturer-specific folders (Samsung, Xiaomi, OnePlus, etc.) for high-quality native recordings (`.m4a`, `.mp3`).
-- **AudioRecordingService**: Acts as a real-time fallback by recording raw PCM audio when native recording is unavailable or blocked at the hardware level.
-- **WhatsAppListenerService**: Captures WhatsApp/Data call events via notification listening.
-- **FirebaseManager**: Orchestrates secure uploads to GCP.
-- **History UI**: A premium native interface for streaming cloud-synced recordings.
+- **App Owner Profile**: A manual configuration screen in `MainActivity` allowing users to save their verified phone number. This acts as the primary identity for LeadSquared owner matching.
+- **CallLogObserver**: Monitors system call logs. It uses **OEMFolderHelper** to scan manufacturer-specific folders and incorporates the "App Owner Number" for reliable identity tracking.
+- **WhatsAppListenerService**: Captures WhatsApp events, using the App Owner identity to ensure consistent tracking across both PSTN and VoIP platforms.
 
 ### ☁️ Firebase Cloud Layer
-- **Cloud Functions (v2)**: Node.js serverless functions (e.g., `synccalltoleadsquared`) that handle CRM logic and data sanitization.
+- **Cloud Functions (v2)**: Implements **Lead-Owner Verification**. It retrieves the lead's assigned owner from LSQ and cross-references their `PhoneMain` with the device's identity using normalized (digit-only) matching.
 - **Firestore (named: cloudtrack)**: High-performance metadata storage for all synchronized call logs.
 - **Firebase Storage**: Secure bucket for hosting encrypted/private audio assets.
 
