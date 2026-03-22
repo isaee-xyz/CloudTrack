@@ -100,11 +100,19 @@ exports.synccalltoleadsquared = onDocumentCreated({
     }
 
     if (!isVerified) {
-        console.warn("Skipping: Owner Mismatch");
-        return db.collection("call_logs").doc(docId).update({ 
-            lsqSyncStatus: "SKIPPED_OWNER_MISMATCH",
-            ownerVerification: "FAILED"
-        });
+        console.warn(`Owner mismatch for ${customerPhone}. Purging...`);
+        if (data.audioDownloadUrl) {
+            try {
+                const url = new URL(data.audioDownloadUrl);
+                const pathParts = url.pathname.split("/o/")[1];
+                const filePath = decodeURIComponent(pathParts.split("?")[0]);
+                await bucket.file(filePath).delete();
+            } catch (e) {
+                console.error(`Storage Delete Error: ${e.message}`);
+            }
+        }
+        await db.collection("call_logs").doc(docId).delete();
+        return;
     }
 
     // Step 3: Create Activity

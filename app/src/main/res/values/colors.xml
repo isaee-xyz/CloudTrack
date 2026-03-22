@@ -2,4 +2,31 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Azure / Primary / Blue -->
+    <color name="azure_primary">#0078D4</color>
+    <color name="blue_primary">#0078D4</color>
+    <color name="azure_light">#E1F0FF</color>
+    <color name="blue_secondary">#2563EB</color>
+    <color name="blue_dark_surface">#0F172A</color>
+    
+    <!-- Emerald / Success -->
+    <color name="emerald_success">#107C10</color>
+    <color name="emerald_light">#DFF6DD</color>
+
+    <!-- Obsidian / Surfaces -->
+    <color name="obsidian_deep">#0B0B0C</color>
+    <color name="obsidian_surface">#1C1C1E</color>
+    <color name="obsidian_elevated">#2C2C2E</color>
+
+    <!-- Slate / Neutral / Text -->
+    <color name="slate_900">#111827</color>
+    <color name="dark_text">#111827</color>
+    <color name="slate_700">#374151</color>
+    <color name="slate_500">#6B7280</color>
+    <color name="gray_text">#6B7280</color>
+    <color name="slate_400">#9CA3AF</color>
+    <color name="slate_200">#E5E7EB</color>
+    <color name="slate_100">#F3F4F6</color>
+    <color name="slate_50">#F9FAFB</color>
 </resources>

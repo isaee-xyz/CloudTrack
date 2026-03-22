@@ -13,7 +13,7 @@
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:background="#E96186"
+        android:background="@drawable/header_gradient"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -37,7 +37,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginStart="24dp"
         android:text="@string/app_subtitle"
-        android:textColor="#FFFFFF"
+        android:textColor="#E0E7FF"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvAppTitle" />
@@ -67,7 +67,7 @@
                 android:text="App Owner Profile"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#363636" />
+                android:textColor="@color/dark_text" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilOwnerNumber"
@@ -94,7 +94,7 @@
                 android:textAllCaps="false"
                 android:textSize="14sp"
                 app:cornerRadius="12dp"
-                app:backgroundTint="#363636" />
+                app:backgroundTint="@color/blue_primary" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -121,7 +121,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@android:drawable/ic_secure"
-                app:tint="#E96186"
+                app:tint="@color/blue_primary"
                 android:contentDescription="@string/desc_security_icon"
                 android:layout_marginBottom="16dp" />
 
@@ -131,7 +131,7 @@
                 android:text="@string/setup_required"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="#363636" />
+                android:textColor="@color/dark_text" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -139,7 +139,7 @@
                 android:layout_marginTop="8dp"
                 android:lineSpacingExtra="4dp"
                 android:text="@string/setup_desc"
-                android:textColor="#4B5563"
+                android:textColor="@color/gray_text"
                 android:textSize="15sp" />
 
             <View
@@ -157,7 +157,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="12dp"
-                app:backgroundTint="#E96186" />
+                app:backgroundTint="@color/blue_primary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGrantNotificationAccess"
@@ -169,9 +169,9 @@
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#E96186"
+                android:textColor="@color/blue_secondary"
                 app:cornerRadius="12dp"
-                app:strokeColor="#E96186" />
+                app:strokeColor="@color/blue_secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGrantAccessibility"
@@ -183,21 +183,34 @@
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#363636"
+                android:textColor="@color/dark_text"
                 app:cornerRadius="12dp"
-                app:strokeColor="#363636" />
+                app:strokeColor="@color/dark_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewAnalytics"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:text="View Analytics Dashboard"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:icon="@android:drawable/ic_menu_today"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/blue_primary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnViewHistory"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="12dp"
                 android:text="View Call Vault History"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="12dp"
-                app:backgroundTint="#363636" />
+                app:backgroundTint="@color/blue_dark_surface" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"

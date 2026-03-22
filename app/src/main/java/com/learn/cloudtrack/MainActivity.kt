@@ -110,6 +110,10 @@ class MainActivity : AppCompatActivity() {
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
 
+        binding.btnViewAnalytics.setOnClickListener {
+            startActivity(Intent(this, com.learn.cloudtrack.ui.AnalyticsActivity::class.java))
+        }
+
         binding.btnViewHistory.setOnClickListener {
             startActivity(Intent(this, com.learn.cloudtrack.history.CallHistoryActivity::class.java))
         }
