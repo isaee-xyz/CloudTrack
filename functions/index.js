@@ -66,8 +66,11 @@ exports.synccalltoleadsquared = onDocumentCreated({
     }
 
     // Found Lead
-    const prospectId = leads[0].ProspectID;
-    const leadOwnerId = leads[0].OwnerID; // Note: LSQ uses OwnerID (capital ID)
+    const lead = leads[0];
+    const prospectId = lead.ProspectID;
+    const leadOwnerId = lead.OwnerId || lead.OwnerID; // Try both casings
+    
+    console.log(`Available Lead Keys: ${Object.keys(lead).join(", ")}`);
     console.log(`Lead: ${prospectId}, Owner: ${leadOwnerId} for ${customerPhone}`);
 
     // Step 2: Retrieve Owner Details and Verify Number
