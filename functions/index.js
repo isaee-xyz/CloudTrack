@@ -54,12 +54,12 @@ exports.synccalltoleadsquared = onDocumentCreated({
     if (!leads || leads.length === 0) {
       console.log(`No lead found for ${customerPhone}. Purging...`);
       if (data.audioDownloadUrl) {
-          try {
-              const url = new URL(data.audioDownloadUrl);
-              const pathParts = url.pathname.split("/o/")[1];
-              const filePath = decodeURIComponent(pathParts.split("?")[0]);
-              await bucket.file(filePath).delete();
-          } catch (e) {}
+        try {
+          const url = new URL(data.audioDownloadUrl);
+          const pathParts = url.pathname.split("/o/")[1];
+          const filePath = decodeURIComponent(pathParts.split("?")[0]);
+          await bucket.file(filePath).delete();
+        } catch (e) { }
       }
       await db.collection("call_logs").doc(docId).delete();
       return;
@@ -69,50 +69,50 @@ exports.synccalltoleadsquared = onDocumentCreated({
     const lead = leads[0];
     const prospectId = lead.ProspectID;
     const leadOwnerId = lead.OwnerId || lead.OwnerID; // Try both casings
-    
+
     console.log(`Available Lead Keys: ${Object.keys(lead).join(", ")}`);
     console.log(`Lead: ${prospectId}, Owner: ${leadOwnerId} for ${customerPhone}`);
 
     // Step 2: Retrieve Owner Details and Verify Number
     let isVerified = false;
     if (leadOwnerId) {
-        const ownerUrl = `${LSQ_BASE_URL}/UserManagement.svc/User/Retrieve/ByUserId?userId=${leadOwnerId}`;
-        try {
-            const ownerResponse = await axios.get(ownerUrl, {
-                headers: { "x-LSQ-AccessKey": LSQ_ACCESS_KEY, "x-LSQ-SecretKey": LSQ_SECRET_KEY }
-            });
-            const owners = ownerResponse.data;
-            if (Array.isArray(owners) && owners.length > 0) {
-                const owner = owners[0];
-                const lsqOwnerPhone = normalize(owner.PhoneMain);
-                
-                console.log(`Verifying: Device [${normalizedDeviceNum}] vs Owner [${lsqOwnerPhone}]`);
+      const ownerUrl = `${LSQ_BASE_URL}/UserManagement.svc/User/Retrieve/ByUserId?userId=${leadOwnerId}`;
+      try {
+        const ownerResponse = await axios.get(ownerUrl, {
+          headers: { "x-LSQ-AccessKey": LSQ_ACCESS_KEY, "x-LSQ-SecretKey": LSQ_SECRET_KEY }
+        });
+        const owners = ownerResponse.data;
+        if (Array.isArray(owners) && owners.length > 0) {
+          const owner = owners[0];
+          const lsqOwnerPhone = normalize(owner.PhoneMain);
 
-                // Check if device number matches or is a suffix of LSQ number
-                if (normalizedDeviceNum && lsqOwnerPhone && lsqOwnerPhone.endsWith(normalizedDeviceNum)) {
-                    isVerified = true;
-                    console.log("Verification Success");
-                }
-            }
-        } catch (err) {
-            console.error(`Owner Fetch Error: ${err.message}`);
+          console.log(`Verifying: Device [${normalizedDeviceNum}] vs Owner [${lsqOwnerPhone}]`);
+
+          // Check if device number matches or is a suffix of LSQ number
+          if (normalizedDeviceNum && lsqOwnerPhone && lsqOwnerPhone.endsWith(normalizedDeviceNum)) {
+            isVerified = true;
+            console.log("Verification Success");
+          }
         }
+      } catch (err) {
+        console.error(`Owner Fetch Error: ${err.message}`);
+      }
     }
 
     if (!isVerified) {
-        console.warn(`Owner mismatch for ${customerPhone}. Purging...`);
-        if (data.audioDownloadUrl) {
-            try {
-                const url = new URL(data.audioDownloadUrl);
-                const pathParts = url.pathname.split("/o/")[1];
-                const filePath = decodeURIComponent(pathParts.split("?")[0]);
-                await bucket.file(filePath).delete();
-            } catch (e) {
-                console.error(`Storage Delete Error: ${e.message}`);
-            }
+      console.warn(`Owner mismatch for ${customerPhone}. Purging...`);
+      if (data.audioDownloadUrl) {
+        try {
+          const url = new URL(data.audioDownloadUrl);
+          const pathParts = url.pathname.split("/o/")[1];
+          const filePath = decodeURIComponent(pathParts.split("?")[0]);
+          await bucket.file(filePath).delete();
+        } catch (e) {
+          console.error(`Storage Delete Error: ${e.message}`);
         }
-        await db.collection("call_logs").doc(docId).delete();
-        return;
+      }
+      await db.collection("call_logs").doc(docId).delete();
+      return;
     }
 
     // Step 3: Create Activity
@@ -125,7 +125,7 @@ exports.synccalltoleadsquared = onDocumentCreated({
     const startTimeFmt = formatToLsqDate(data.startTime);
     const endTimeFmt = formatToLsqDate(data.endTime);
     const createUrl = `${LSQ_BASE_URL}/ProspectActivity.svc/Create`;
-    
+
     let note = `Call via CloudTrack [${data.platform || "PSTN"}]\n`;
     note += `Device: ${fullDeviceNumber}\n`;
     note += `Customer: ${customerPhone}\n`;
@@ -156,10 +156,10 @@ exports.synccalltoleadsquared = onDocumentCreated({
     });
 
     console.log("Sync Success");
-    return db.collection("call_logs").doc(docId).update({ 
-        lsqSyncStatus: "SUCCESS", 
-        lsqProspectId: prospectId,
-        ownerVerification: "PASSED"
+    return db.collection("call_logs").doc(docId).update({
+      lsqSyncStatus: "SUCCESS",
+      lsqProspectId: prospectId,
+      ownerVerification: "PASSED"
     });
 
   } catch (error) {
