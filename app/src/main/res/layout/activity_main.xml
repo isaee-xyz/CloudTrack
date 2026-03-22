@@ -132,20 +132,6 @@
                 app:strokeColor="#363636" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOpenCallSettings"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="12dp"
-                android:text="Open Samsung Auto-Record Settings"
-                android:textAllCaps="false"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="#2563EB"
-                app:cornerRadius="12dp"
-                app:strokeColor="#2563EB" />
-
-            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnViewHistory"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -170,77 +156,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Privacy & Data Minimization Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardPrivacy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:cardBackgroundColor="#E0F2FE"
-        app:strokeWidth="1dp"
-        app:strokeColor="#7DD3FC"
-        app:layout_constraintTop_toBottomOf="@id/cardPermissions">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_lock_idle_lock"
-                app:tint="#0369A1" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Privacy &amp; Data Ethics"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#0369A1" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Personal calls are automatically detected and purged instantly. Only registered leads are stored."
-                    android:textSize="12sp"
-                    android:textColor="#0C4A6E" />
-            </LinearLayout>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Developer In-App Console -->
-    <ScrollView
-        android:id="@+id/scrollViewDebug"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="24dp"
-        android:background="#E5E7EB"
-        android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cardPrivacy"
-        app:layout_constraintBottom_toTopOf="@+id/tvFooterSecurity">
-        <TextView
-            android:id="@+id/tvDebugConsole"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Debugger Awaiting..."
-            android:textColor="#374151"
-            android:lineSpacingExtra="2dp"
-            android:fontFamily="monospace"
-            android:textSize="11sp" />
-    </ScrollView>
 
     <!-- Footer Security Notice -->
     <TextView
@@ -253,6 +168,8 @@
         android:text="@string/footer_security"
         android:textColor="#6B7280"
         android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardPermissions"
+        app:layout_constraintVertical_bias="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

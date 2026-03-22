@@ -21,9 +21,10 @@ object FirebaseManager {
     suspend fun syncCallData(context: Context, call: CallDataEntity): Boolean {
         val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            Logger.log(context, TAG, "❌ Sync Aborted: No authenticated user found.")
+            Logger.log(context, TAG, "❌ Sync Aborted: No authenticated user found. UID is null.")
             return false
         }
+        Logger.log(context, TAG, "👤 Authenticated as: ${user.email} (${user.uid})")
 
         return try {
             val callMap = hashMapOf(
@@ -46,31 +47,34 @@ object FirebaseManager {
                 val file = File(call.audioFilePath)
                 if (file.exists()) {
                     try {
-                        Logger.log(context, TAG, "Found local audio: ${file.name}. Uploading to Cloud Storage...")
-                        val audioRef = storage.child("call_recordings/${file.name}")
+                        Logger.log(context, TAG, "📦 File: ${file.name} | Size: ${file.length()} bytes")
+                        Logger.log(context, TAG, "🚀 Uploading to Storage: call_recordings/${file.name}")
                         
-                        // Use putStream to bypass strict 'file://' URI restrictions on Android 11+
+                        val audioRef = storage.child("call_recordings/${file.name}")
                         val stream = java.io.FileInputStream(file)
                         audioRef.putStream(stream).await()
                         
+                        Logger.log(context, TAG, "✅ Storage Upload Done. Getting URL...")
                         val downloadUrl = audioRef.downloadUrl.await()
                         callMap["audioDownloadUrl"] = downloadUrl.toString()
-                        Logger.log(context, TAG, "Audio Storage Upload Complete!")
+                        Logger.log(context, TAG, "🔗 Audio URL: $downloadUrl")
                     } catch (e: Exception) {
-                        Logger.log(context, TAG, "Audio Upload Failed: ${e.message}. Triggering Worker Retry...")
-                        return false // Fail the sync so WorkManager retries instead of swallowing the error
+                        Logger.log(context, TAG, "❌ Audio Upload Error: ${e.message}")
+                        return false 
                     }
+                } else {
+                    Logger.log(context, TAG, "⚠️ Audio path exists but file not found: ${call.audioFilePath}")
                 }
             }
 
             // Step 2: Upload Metadata to Firestore
-            Logger.log(context, TAG, "Uploading metadata to Firestore...")
+            Logger.log(context, TAG, "📤 Sending to Firestore [db: cloudtrack | coll: call_logs]...")
             
-            val documentReference = withTimeout(10000) {
+            val documentReference = withTimeout(15000) {
                 firestore.collection("call_logs").add(callMap).await()
             }
             
-            Logger.log(context, TAG, "Firestore Sync Complete: ${documentReference.id}")
+            Logger.log(context, TAG, "✅ Firestore Sync Success! DocID: ${documentReference.id}")
             
             true
         } catch (e: kotlinx.coroutines.TimeoutCancellationException) {

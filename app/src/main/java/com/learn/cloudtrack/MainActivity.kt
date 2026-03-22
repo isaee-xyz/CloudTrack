@@ -16,21 +16,10 @@ import android.net.Uri
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
-    private val logUpdater = object : Runnable {
-        override fun run() {
-            binding.tvDebugConsole.text = com.learn.cloudtrack.utils.Logger.getLogs(this@MainActivity)
-            binding.scrollViewDebug.post {
-                binding.scrollViewDebug.fullScroll(android.view.View.FOCUS_DOWN)
-            }
-            handler.postDelayed(this, 1000)
-        }
-    }
 
     private val requiredPermissions = mutableListOf(
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.READ_CALL_LOG,
-        Manifest.permission.READ_CONTACTS,
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.MODIFY_AUDIO_SETTINGS
     ).apply {
@@ -90,29 +79,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.btnOpenCallSettings.setOnClickListener {
-            try {
-                // Try modern Samsung Settings
-                val intent = Intent()
-                intent.component = android.content.ComponentName("com.samsung.android.dialer", "com.samsung.android.dialer.settings.CallRecordSettingActivity")
-                startActivity(intent)
-            } catch (e: Exception) {
-                try {
-                    // Try older Samsung Settings
-                    val intent2 = Intent()
-                    intent2.component = android.content.ComponentName("com.samsung.android.incallui", "com.samsung.android.incallui.CallFeaturesSetting")
-                    startActivity(intent2)
-                } catch (e2: Exception) {
-                    try {
-                        // Standard Android Call Settings
-                        val intent3 = Intent("android.telecom.action.SHOW_CALL_SETTINGS")
-                        startActivity(intent3)
-                    } catch (e3: Exception) {
-                        Toast.makeText(this, "Auto-open failed. Please open Dial Settings manually.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
 
         binding.btnViewHistory.setOnClickListener {
             startActivity(Intent(this, com.learn.cloudtrack.history.CallHistoryActivity::class.java))
@@ -138,12 +104,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         checkSpecialPermissions()
-        handler.post(logUpdater)
     }
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacks(logUpdater)
     }
 
     private fun isAccessibilityEnabled(): Boolean {
