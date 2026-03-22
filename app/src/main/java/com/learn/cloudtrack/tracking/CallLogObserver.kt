@@ -11,7 +11,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.learn.cloudtrack.db.AppDatabase
 import com.learn.cloudtrack.db.CallDataEntity
-import com.learn.cloudtrack.profile.AppOwnerProfile
 import com.learn.cloudtrack.sync.UploadWorker
 import com.learn.cloudtrack.utils.Logger
 import com.learn.cloudtrack.utils.OEMFolderHelper

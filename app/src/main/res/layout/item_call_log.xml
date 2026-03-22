@@ -27,7 +27,7 @@
                 android:id="@+id/ivCallType"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="#363636"
+                app:tint="@color/blue_primary"
                 tools:src="@android:drawable/sym_call_incoming" />
 
             <LinearLayout
@@ -72,7 +72,7 @@
                     tools:text="14s"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="#E96186" />
+                    android:textColor="@color/blue_primary" />
             </LinearLayout>
 
         <TextView
@@ -103,16 +103,15 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_media_play"
-                app:tint="#E96186" />
+                app:tint="@color/blue_primary" />
 
             <!-- We will simply use a generic progress bar if no true generic seekbar functionality is built, leaving Seekbar for visual presence -->
             <SeekBar
-                android:id="@+id/audioSeekBar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:progressTint="#E96186"
-                android:thumbTint="#E96186" />
+                android:progressTint="@color/blue_primary"
+                android:thumbTint="@color/blue_primary" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
