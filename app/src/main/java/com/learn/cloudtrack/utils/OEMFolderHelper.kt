@@ -24,6 +24,9 @@ object OEMFolderHelper {
             }
             manufacturer.contains("xiaomi") || manufacturer.contains("redmi") -> {
                 paths.add("MIUI/sound_recorder/call_rec")
+                paths.add("MIUI/debug_log/common/call_rec")
+                paths.add("MIUI/call_rec")
+                paths.add("Recordings/Call") // Some newer Xiaomi/Poco use this
             }
             manufacturer.contains("oneplus") -> {
                 paths.add("Record/PhoneRecord")
