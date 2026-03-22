@@ -108,7 +108,10 @@ object CallLogObserver {
                     }
 
 
-                    val (userCC, userNN) = splitNumber(dialedNum, context)
+                    val prefs = context.getSharedPreferences("CloudTrackPrefs", Context.MODE_PRIVATE)
+                    val ownerNumber = prefs.getString("owner_phoneNumber", null)
+
+                    val (userCC, userNN) = splitNumber(dialedNum ?: ownerNumber, context)
                     val (custCC, custNN) = splitNumber(number, context)
 
                     val entity = CallDataEntity(

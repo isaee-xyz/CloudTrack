@@ -86,6 +86,9 @@ class WhatsAppListenerService : NotificationListenerService() {
 
             Log.d(TAG, "WhatsApp Call Ended: $title | Duration: $durationSecs secs")
 
+            val prefs = applicationContext.getSharedPreferences("CloudTrackPrefs", Context.MODE_PRIVATE)
+            val ownerNumber = prefs.getString("owner_phoneNumber", "Data") ?: "Data"
+
             val entity = CallDataEntity(
                 contactName = tracker.contactName,
                 phoneNumber = "WhatsApp_Call",
@@ -96,11 +99,11 @@ class WhatsAppListenerService : NotificationListenerService() {
                 platform = if (tracker.isBusiness) "WhatsApp Business" else "WhatsApp",
                 callType = callType,
                 userCountryCode = "Data",
-                userNumber = "Data",
+                userNumber = ownerNumber,
                 customerCountryCode = "Data",
                 customerNumber = tracker.contactName,
                 dialCountryCode = "Data",
-                dialNumber = "Data",
+                dialNumber = ownerNumber,
                 simId = "Data",
                 audioFilePath = null,
                 syncStatus = "PENDING"

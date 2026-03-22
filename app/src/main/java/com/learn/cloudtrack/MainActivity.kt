@@ -80,6 +80,20 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        val prefs = getSharedPreferences("CloudTrackPrefs", MODE_PRIVATE)
+        val savedNumber = prefs.getString("owner_phoneNumber", "")
+        binding.etOwnerNumber.setText(savedNumber)
+
+        binding.btnSaveProfile.setOnClickListener {
+            val number = binding.etOwnerNumber.text.toString().trim()
+            if (number.isNotEmpty()) {
+                prefs.edit().putString("owner_phoneNumber", number).apply()
+                Toast.makeText(this, "Profile Saved: $number", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.btnViewHistory.setOnClickListener {
             startActivity(Intent(this, com.learn.cloudtrack.history.CallHistoryActivity::class.java))
         }
