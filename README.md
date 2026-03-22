@@ -38,8 +38,5 @@
 ## 🏗️ Architecture
 For a deep dive into how CloudTrack works, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## 📊 Audit
-Review our first-principles audit in [AUDIT.md](AUDIT.md).
-
 ---
 *Created with ❤️ for high-performance sales teams.*

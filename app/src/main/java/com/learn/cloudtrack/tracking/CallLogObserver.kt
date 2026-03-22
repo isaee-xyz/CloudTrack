@@ -13,6 +13,7 @@ import com.learn.cloudtrack.db.AppDatabase
 import com.learn.cloudtrack.db.CallDataEntity
 import com.learn.cloudtrack.sync.UploadWorker
 import com.learn.cloudtrack.utils.Logger
+import com.learn.cloudtrack.utils.OEMFolderHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -153,20 +154,28 @@ object CallLogObserver {
     }
 
     private fun getLatestDefaultCallRecording(): String? {
-        val recordingsDir = java.io.File(android.os.Environment.getExternalStorageDirectory(), "Recordings/Call")
-        if (recordingsDir.exists() && recordingsDir.isDirectory) {
-            val files = recordingsDir.listFiles { file -> 
-                file.isFile && (file.name.endsWith(".m4a", ignoreCase = true) || 
-                                file.name.endsWith(".mp3", ignoreCase = true) || 
-                                file.name.endsWith(".amr", ignoreCase = true) || 
-                                file.name.endsWith(".wav", ignoreCase = true))
-            }
-            if (files != null && files.isNotEmpty()) {
-                val latest = files.maxByOrNull { it.lastModified() }
-                // Make sure it's a recent recording (e.g. updated in the last 2 minutes)
-                if (latest != null && System.currentTimeMillis() - latest.lastModified() < 2 * 60 * 1000) {
-                    return latest.absolutePath
+        val candidateDirs = OEMFolderHelper.getPossibleRecordingDirs()
+        val allValidFiles = mutableListOf<java.io.File>()
+
+        for (dir in candidateDirs) {
+            if (dir.exists() && dir.isDirectory) {
+                val files = dir.listFiles { file ->
+                    file.isFile && (file.name.endsWith(".m4a", ignoreCase = true) ||
+                                    file.name.endsWith(".mp3", ignoreCase = true) ||
+                                    file.name.endsWith(".amr", ignoreCase = true) ||
+                                    file.name.endsWith(".wav", ignoreCase = true))
                 }
+                if (files != null) {
+                    allValidFiles.addAll(files)
+                }
+            }
+        }
+
+        if (allValidFiles.isNotEmpty()) {
+            val latest = allValidFiles.maxByOrNull { it.lastModified() }
+            // Make sure it's a recent recording (e.g. updated in the last 2 minutes)
+            if (latest != null && System.currentTimeMillis() - latest.lastModified() < 2 * 60 * 1000) {
+                return latest.absolutePath
             }
         }
         return null

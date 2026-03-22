@@ -6,39 +6,39 @@ CloudTrack is a distributed system consisting of an **Android Agent** and a **Fi
 ```mermaid
 graph TD
     A[Android Phone] -->|Capture Call| B(Foreground Service)
-    B -->|Store Locally| C[(Room DB)]
-    C -->|Trigger Sync| D[Upload Worker]
-    D -->|Audio| E[Firebase Storage]
-    D -->|Metadata| F[Firestore]
-    F -->|Trigger| G[Cloud Function]
-    G -->|Check Lead| H[LeadSquared CRM]
-    H -->|Valid Lead?| I{Decision}
-    I -->|Yes| J[Post Activity to CRM]
-    I -->|No| K[Purge Firestore & Storage]
+    B -->|Fallback| C[Internal PCM Recorder]
+    A -->|System Recorder| D[Native OEM Folder]
+    D -->|Detection| E[OEMFolderHelper]
+    E -->|Prioritize| F[CallLogObserver]
+    F -->|Store Metadata| G[(Room DB)]
+    G -->|Trigger Sync| H[Upload Worker]
+    H -->|Audio| I[Firebase Storage]
+    H -->|Metadata| J[Firestore]
+    J -->|Trigger| K[Cloud Function]
+    K -->|Check Lead| L[LeadSquared CRM]
+    L -->|Valid Lead?| M{Decision}
+    M -->|Yes| N[Post Activity to CRM]
+    M -->|No| O[Purge Firestore & Storage]
 ```
 
 ## Component Breakdown
 
 ### 📱 Android Application
-- **CallLogObserver**: Monitors system call logs for metadata.
-- **WhatsAppListenerService**: Captures WhatsApp/Data call events via notifications.
-- **AudioRecordingService**: Handles background audio capture with priority elevation.
+- **CallLogObserver**: Monitors system call logs. It uses **OEMFolderHelper** to scan manufacturer-specific folders (Samsung, Xiaomi, OnePlus, etc.) for high-quality native recordings (`.m4a`, `.mp3`).
+- **AudioRecordingService**: Acts as a real-time fallback by recording raw PCM audio when native recording is unavailable or blocked at the hardware level.
+- **WhatsAppListenerService**: Captures WhatsApp/Data call events via notification listening.
 - **FirebaseManager**: Orchestrates secure uploads to GCP.
-- **History UI**: A real-time Firestore viewer that streams audio directly from the cloud.
+- **History UI**: A premium native interface for streaming cloud-synced recordings.
 
 ### ☁️ Firebase Cloud Layer
-- **Cloud Functions (2nd Gen)**: Node.js serverless environment. Uses Axios for CRM integration.
-- **Firestore (named: cloudtrack)**: High-performance metadata storage.
-- **Firebase Storage**: Secure audio vault.
+- **Cloud Functions (v2)**: Node.js serverless functions (e.g., `synccalltoleadsquared`) that handle CRM logic and data sanitization.
+- **Firestore (named: cloudtrack)**: High-performance metadata storage for all synchronized call logs.
+- **Firebase Storage**: Secure bucket for hosting encrypted/private audio assets.
 
 ### 📞 Third-Party Integration
-- **LeadSquared CRM**: The final destination for business activity.
-- **API Endpoints used**:
-  - `RetrieveLeadByPhoneNumber`: Verifies prospect existence.
-  - `ProspectActivity.svc/Create`: Posts synchronized call activities.
+- **LeadSquared CRM**: The destination for sales activity. Uses `RetrieveLeadByPhoneNumber` and `ProspectActivity.svc/Create` APIs.
 
-## Data Minimization Strategy
-To stay lean and privacy-compliant, the architecture follows an **"Upload then Verify"** pattern:
-1. App uploads everything (to keep secrets secure in the cloud).
-2. Server verifies the lead.
-3. Server purges non-lead data immediately.
+## Data Minimization & Privacy
+1. **Local-First**: Calls are briefly cached locally in Room and internal storage.
+2. **Ephemeral Cloud Storage**: Audio is uploaded for CRM processing but is **permanently purged** by the Cloud Function if the caller is not a recognized lead.
+3. **Secret Management**: All API keys are stored in Firebase environment variables, never in the Android source code.
