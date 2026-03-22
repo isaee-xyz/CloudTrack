@@ -89,12 +89,14 @@ class WhatsAppListenerService : NotificationListenerService() {
             val entity = CallDataEntity(
                 contactName = tracker.contactName,
                 phoneNumber = "WhatsApp_Call", // Phone number isn't easily accessible via notification
+                countryCode = "Data_Call",
                 startTime = tracker.startTime,
                 endTime = tracker.endTime,
                 durationSeconds = durationSecs,
                 platform = if (tracker.isBusiness) "WhatsApp Business" else "WhatsApp",
                 callType = callType,
                 simId = "Data", // WhatsApp uses pure data
+                dialedNumber = null,
                 audioFilePath = null, // Recording WA is complex, left null for V1
                 syncStatus = "PENDING"
             )

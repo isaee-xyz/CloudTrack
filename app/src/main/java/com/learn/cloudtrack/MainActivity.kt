@@ -10,6 +10,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import com.learn.cloudtrack.databinding.ActivityMainBinding
+import android.os.Environment
+import android.net.Uri
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             add(Manifest.permission.POST_NOTIFICATIONS)
+            add(Manifest.permission.READ_MEDIA_AUDIO)
+        } else {
+            add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }.toTypedArray()
 
@@ -61,6 +66,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnGrantPermissions.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+                try {
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    intent.data = Uri.parse("package:$packageName")
+                    startActivity(intent)
+                    Toast.makeText(this, "Please enable 'Allow access to manage all files'", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+                    startActivity(intent)
+                }
+            }
             requestPermissionLauncher.launch(requiredPermissions)
         }
         
@@ -74,8 +90,48 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.btnOpenCallSettings.setOnClickListener {
+            try {
+                // Try modern Samsung Settings
+                val intent = Intent()
+                intent.component = android.content.ComponentName("com.samsung.android.dialer", "com.samsung.android.dialer.settings.CallRecordSettingActivity")
+                startActivity(intent)
+            } catch (e: Exception) {
+                try {
+                    // Try older Samsung Settings
+                    val intent2 = Intent()
+                    intent2.component = android.content.ComponentName("com.samsung.android.incallui", "com.samsung.android.incallui.CallFeaturesSetting")
+                    startActivity(intent2)
+                } catch (e2: Exception) {
+                    try {
+                        // Standard Android Call Settings
+                        val intent3 = Intent("android.telecom.action.SHOW_CALL_SETTINGS")
+                        startActivity(intent3)
+                    } catch (e3: Exception) {
+                        Toast.makeText(this, "Auto-open failed. Please open Dial Settings manually.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
         binding.btnViewHistory.setOnClickListener {
             startActivity(Intent(this, com.learn.cloudtrack.history.CallHistoryActivity::class.java))
+        }
+
+        binding.btnLogout.setOnClickListener {
+            // Sign out from Firebase
+            com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+            
+            // Sign out from Google to allow account switcher next time
+            val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .build()
+            com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(this, gso).signOut().addOnCompleteListener {
+                // Return to Login Screen and clear activity stack
+                val intent = Intent(this, com.learn.cloudtrack.ui.LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -90,15 +146,34 @@ class MainActivity : AppCompatActivity() {
         handler.removeCallbacks(logUpdater)
     }
 
+    private fun isAccessibilityEnabled(): Boolean {
+        val am = getSystemService(ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: return false
+        return enabledServices.contains(packageName, ignoreCase = true)
+    }
+
     private fun checkSpecialPermissions() {
         val hasNotificationAccess = NotificationManagerCompat.getEnabledListenerPackages(this).contains(packageName)
         binding.btnGrantNotificationAccess.isEnabled = !hasNotificationAccess
-        binding.btnGrantNotificationAccess.text = if (hasNotificationAccess) "Notification Access: GRANTED" else "Grant Notification Access (Required for WhatsApp)"
+        binding.btnGrantNotificationAccess.text = if (hasNotificationAccess)
+            "✅ WhatsApp Tracking: ACTIVE"
+        else
+            "Grant Notification Access (Required for WhatsApp)"
 
-        val allGranted = requiredPermissions.all { 
-            androidx.core.content.ContextCompat.checkSelfPermission(this, it) == android.content.pm.PackageManager.PERMISSION_GRANTED 
+        val hasAccessibility = isAccessibilityEnabled()
+        binding.btnGrantAccessibility.isEnabled = !hasAccessibility
+        binding.btnGrantAccessibility.text = if (hasAccessibility)
+            "✅ Microphone Elevation: ACTIVE"
+        else
+            "⚠️ Enable Accessibility Elevation (Required for Audio)"
+
+        val allGranted = requiredPermissions.all {
+            androidx.core.content.ContextCompat.checkSelfPermission(this, it) == android.content.pm.PackageManager.PERMISSION_GRANTED
         }
         binding.btnGrantPermissions.isEnabled = !allGranted
-        binding.btnGrantPermissions.text = if (allGranted) "Core Tracking: GRANTED" else "Enable Core Tracking"
+        binding.btnGrantPermissions.text = if (allGranted) "✅ Core Tracking: ACTIVE" else "Enable Core Tracking"
     }
 }

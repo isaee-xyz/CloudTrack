@@ -7,4 +7,5 @@
     <string name="btn_enable_wa">Enable WhatsApp Tracking</string>
     <string name="footer_security">Your data is encrypted and securely sent to your private Firebase vault.</string>
     <string name="desc_security_icon">Security Shield Icon</string>
+    <string name="accessibility_desc">CloudTrack uses Accessibility Services to elevate microphone priority so the caller\'s voice can be recorded during SIM calls without interrupting the call experience.</string>
 </resources>

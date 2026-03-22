@@ -1,0 +1,14 @@
+{
+  "name": "functions",
+  "description": "CloudTrack LeadSquared Integration",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "firebase-admin": "^13.7.0",
+    "firebase-functions": "^7.2.2"
+  },
+  "engines": {
+    "node": "24"
+  }
+}

@@ -33,6 +33,7 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
         val tvPhoneNumber: TextView = view.findViewById(R.id.tvPhoneNumber)
         val tvDuration: TextView = view.findViewById(R.id.tvDuration)
         val tvDate: TextView = view.findViewById(R.id.tvDate)
+        val tvSimInfo: TextView = view.findViewById(R.id.tvSimInfo)
         
         val layoutAudioPlayer: LinearLayout = view.findViewById(R.id.layoutAudioPlayer)
         val btnPlayPause: ImageButton = view.findViewById(R.id.btnPlayPause)
@@ -56,7 +57,8 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
         val call = callList[position]
 
         holder.tvContactName.text = call.contactName ?: "Unknown"
-        holder.tvPhoneNumber.text = call.phoneNumber ?: "Unknown Number"
+        val displayPhone = if (call.countryCode != null) "${call.countryCode} ${call.phoneNumber}" else call.phoneNumber ?: "Unknown Number"
+        holder.tvPhoneNumber.text = displayPhone
         holder.tvDuration.text = "${call.durationSeconds}s"
 
         val sdf = SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault())
@@ -68,15 +70,28 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
             else android.R.drawable.sym_call_missed
         )
 
-        val audioFile = call.audioFilePath?.let { File(it) }
-        val hasAudio = audioFile != null && audioFile.exists() && audioFile.length() > 0
+        val simLabel = call.simId ?: "SIM Unknown"
+        val dialedText = if (call.dialedNumber != null) " (${call.dialedNumber})" else ""
+        holder.tvSimInfo.text = "Source: $simLabel$dialedText"
+
+        val audioUrl = call.audioFilePath // This now contains the Firestore URL
+        val hasAudio = audioUrl != null && (audioUrl.startsWith("http") || File(audioUrl).exists())
 
         if (hasAudio) {
             holder.layoutAudioPlayer.visibility = View.VISIBLE
             
             val isPlayingThis = (currentlyPlayingPosition == position)
+            var isPlaying = false
+            try {
+                if (mediaPlayer != null) {
+                    isPlaying = mediaPlayer!!.isPlaying
+                }
+            } catch (e: Exception) {
+                // Player might be in an invalid state
+            }
+            
             holder.btnPlayPause.setImageResource(
-                if (isPlayingThis && mediaPlayer?.isPlaying == true) android.R.drawable.ic_media_pause
+                if (isPlayingThis && isPlaying) android.R.drawable.ic_media_pause
                 else android.R.drawable.ic_media_play
             )
             
@@ -95,7 +110,7 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
                     holder.btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
                     startSeekBarUpdate(holder.audioSeekBar)
                 } else {
-                    playNewAudio(position, audioFile!!.absolutePath, holder)
+                    playNewAudio(position, audioUrl!!, holder)
                 }
             }
             
@@ -116,22 +131,23 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
 
     private fun playNewAudio(position: Int, filePath: String, holder: CallViewHolder) {
         stopAudio()
-        currentlyPlayingPosition = position
-        
-        mediaPlayer = MediaPlayer().apply {
-            try {
-                setDataSource(filePath)
-                prepare()
-                start()
-                holder.audioSeekBar.max = duration
-                holder.btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
-                startSeekBarUpdate(holder.audioSeekBar)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                this.release()
-                mediaPlayer = null
-                currentlyPlayingPosition = -1
-            }
+        try {
+            val player = MediaPlayer()
+            player.setDataSource(filePath)
+            player.prepare()
+            player.start()
+            
+            mediaPlayer = player
+            currentlyPlayingPosition = position
+            
+            holder.audioSeekBar.max = player.duration
+            holder.btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
+            startSeekBarUpdate(holder.audioSeekBar)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            currentlyPlayingPosition = -1
+            mediaPlayer?.release()
+            mediaPlayer = null
         }
         notifyDataSetChanged()
     }
@@ -160,18 +176,22 @@ class CallHistoryAdapter(private var callList: List<CallDataEntity>) :
     private fun startSeekBarUpdate(seekBar: SeekBar) {
         updateSeekBarRunnable = object : Runnable {
             override fun run() {
-                mediaPlayer?.let {
-                    if (it.isPlaying) {
-                        seekBar.progress = it.currentPosition
-                        handler.postDelayed(this, 100)
-                    } else {
-                        // Finished playing
-                        seekBar.progress = seekBar.max
-                        val previousPos = currentlyPlayingPosition
-                        currentlyPlayingPosition = -1
-                        stopAudio()
-                        if (previousPos != -1) notifyItemChanged(previousPos)
+                try {
+                    mediaPlayer?.let {
+                        if (it.isPlaying) {
+                            seekBar.progress = it.currentPosition
+                            handler.postDelayed(this, 100)
+                        } else {
+                            // Finished playing
+                            seekBar.progress = seekBar.max
+                            val previousPos = currentlyPlayingPosition
+                            currentlyPlayingPosition = -1
+                            stopAudio()
+                            if (previousPos != -1) notifyItemChanged(previousPos)
+                        }
                     }
+                } catch (e: Exception) {
+                    stopAudio()
                 }
             }
         }

@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "source": "functions",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" install"
+    ]
+  },
+  "firestore": {
+    "database": "cloudtrack",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

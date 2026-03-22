@@ -46,24 +46,34 @@
                     android:textStyle="bold"
                     android:textColor="#111827" />
 
+                    <TextView
+                        android:id="@+id/tvPhoneNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="+1 (555) 123-4567"
+                        android:textSize="14sp"
+                        android:textColor="#6B7280" />
+
+                    <TextView
+                        android:id="@+id/tvSimInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        tools:text="SIM: Airtel (9876543210)"
+                        android:textSize="11sp"
+                        android:textStyle="italic"
+                        android:textColor="#9CA3AF" />
+                </LinearLayout>
+
                 <TextView
-                    android:id="@+id/tvPhoneNumber"
+                    android:id="@+id/tvDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="+1 (555) 123-4567"
+                    tools:text="14s"
                     android:textSize="14sp"
-                    android:textColor="#6B7280" />
+                    android:textStyle="bold"
+                    android:textColor="#E96186" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="14s"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#E96186" />
-        </LinearLayout>
 
         <TextView
             android:id="@+id/tvDate"

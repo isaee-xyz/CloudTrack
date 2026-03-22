@@ -38,17 +38,54 @@ class CallHistoryActivity : AppCompatActivity() {
             applyFilter(checkedIds[0])
         }
 
-        loadData()
+        setupFirestoreListener()
+    }
+
+    private fun setupFirestoreListener() {
+        val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser ?: return
+        val firestore = com.google.firebase.firestore.FirebaseFirestore.getInstance("cloudtrack")
+
+        firestore.collection("call_logs")
+            .whereEqualTo("userId", user.uid)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    android.util.Log.e("CallHistory", "Firestore Listen Failed", e)
+                    return@addSnapshotListener
+                }
+
+                if (snapshots != null) {
+                    val calls = mutableListOf<CallDataEntity>()
+                    for (doc in snapshots) {
+                        try {
+                            // Map Firestore doc to Entity
+                            val entity = CallDataEntity(
+                                id = 0, // Not used for UI
+                                contactName = doc.getString("contactName"),
+                                phoneNumber = doc.getString("phoneNumber"),
+                                countryCode = doc.getString("countryCode"),
+                                startTime = doc.getLong("startTime") ?: 0L,
+                                endTime = doc.getLong("endTime") ?: 0L,
+                                durationSeconds = doc.getLong("durationSeconds")?.toInt() ?: 0,
+                                platform = doc.getString("platform") ?: "PSTN",
+                                callType = doc.getString("callType") ?: "UNKNOWN",
+                                simId = doc.getString("simId"),
+                                dialedNumber = doc.getString("dialedNumber"),
+                                audioFilePath = doc.getString("audioDownloadUrl"), // Using URL as the 'path' for the adapter
+                                syncStatus = "SYNCED"
+                            )
+                            calls.add(entity)
+                        } catch (ex: Exception) {
+                            android.util.Log.e("CallHistory", "Error mapping doc: ${ex.message}")
+                        }
+                    }
+                    allCalls = calls.sortedByDescending { it.startTime }
+                    applyFilter(chipGroupFilters.checkedChipId)
+                }
+            }
     }
 
     private fun loadData() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val dao = AppDatabase.getDatabase(applicationContext).callDataDao()
-            allCalls = dao.getAllCalls()
-            withContext(Dispatchers.Main) {
-                applyFilter(chipGroupFilters.checkedChipId)
-            }
-        }
+        // No longer needed, as setupFirestoreListener handles real-time sync
     }
 
     private fun applyFilter(chipId: Int) {
