@@ -83,16 +83,32 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("CloudTrackPrefs", MODE_PRIVATE)
         val savedNumber = prefs.getString("owner_phoneNumber", "")
         binding.etOwnerNumber.setText(savedNumber)
+        
+        if (savedNumber != null && savedNumber.isNotEmpty()) {
+            binding.btnSaveProfile.text = "✅ Number Verified"
+            binding.btnSaveProfile.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"))
+        }
 
         binding.btnSaveProfile.setOnClickListener {
             val number = binding.etOwnerNumber.text.toString().trim()
             if (number.isNotEmpty()) {
                 prefs.edit().putString("owner_phoneNumber", number).apply()
-                Toast.makeText(this, "Profile Saved: $number", Toast.LENGTH_SHORT).show()
+                binding.btnSaveProfile.text = "✅ Number Verified"
+                binding.btnSaveProfile.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"))
+                Toast.makeText(this, "Profile Saved Successfully", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Please enter a valid number", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.etOwnerNumber.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                binding.btnSaveProfile.text = "Verify & Save Number"
+                binding.btnSaveProfile.setBackgroundColor(android.graphics.Color.parseColor("#363636"))
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
 
         binding.btnViewHistory.setOnClickListener {
             startActivity(Intent(this, com.learn.cloudtrack.history.CallHistoryActivity::class.java))
