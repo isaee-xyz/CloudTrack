@@ -8,6 +8,12 @@
 .externalNativeBuild
 .cxx
 local.properties
-
-# Firebase / Secrets — DO NOT COMMIT YOUR OWN google-services.json
+google-services*.json
+# Firebase / Secrets
 app/google-services.json
+.firebaserc
+firebase-debug.log
+/functions/node_modules/
+/functions/lib/
+/functions/secrets.json
+.env

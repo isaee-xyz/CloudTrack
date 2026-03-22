@@ -9,8 +9,8 @@ const db = getFirestore("cloudtrack");
 const bucket = getStorage().bucket(); // Default Storage bucket
 
 // Configuration
-const LSQ_ACCESS_KEY = "u$rafd91761735c7f8d35c95a52a661e934";
-const LSQ_SECRET_KEY = "e55439da176cd20278ad963903f7b8f95d09ba94";
+const LSQ_ACCESS_KEY = process.env.LSQ_ACCESS_KEY;
+const LSQ_SECRET_KEY = process.env.LSQ_SECRET_KEY;
 const LSQ_BASE_URL = "https://api-in21.leadsquared.com/v2";
 
 /**
