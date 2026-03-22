@@ -54,12 +54,14 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // 2. Configure Google Sign In to request the user's ID token and basic profile
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        @Suppress("DEPRECATION")
+        val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        @Suppress("DEPRECATION")
+        googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(this, gso)
 
         // 3. Setup Login Listener
         binding.btnGoogleSignIn.setOnClickListener {

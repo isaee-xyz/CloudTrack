@@ -92,9 +92,14 @@ object CallLogObserver {
                         val sub = activeSubs?.find { info -> info.iccId == accountId || info.subscriptionId.toString() == accountId }
                         if (sub != null) {
                             simName = sub.displayName.toString()
-                            // Try to get the actual number of the SIM. 
-                            // This often requires READ_PHONE_NUMBERS permission on newer androids.
-                            dialedNum = try { sub.number } catch (e: Exception) { null }
+                            dialedNum = try {
+                                if (android.os.Build.VERSION.SDK_INT >= 33) {
+                                    subManager.getPhoneNumber(sub.subscriptionId)
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    sub.number
+                                }
+                            } catch (e: Exception) { null }
                         }
                     }
 

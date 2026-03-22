@@ -103,8 +103,11 @@ class MainActivity : AppCompatActivity() {
             com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
             
             // Sign out from Google to allow account switcher next time
+            @Suppress("DEPRECATION")
             val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .build()
+            
+            @Suppress("DEPRECATION")
             com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(this, gso).signOut().addOnCompleteListener {
                 // Return to Login Screen and clear activity stack
                 val intent = Intent(this, com.learn.cloudtrack.ui.LoginActivity::class.java)
