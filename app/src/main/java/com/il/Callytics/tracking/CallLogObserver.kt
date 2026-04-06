@@ -116,7 +116,10 @@ object CallLogObserver {
                     val prefs = context.getSharedPreferences("CallyticsPrefs", Context.MODE_PRIVATE)
                     val ownerNumber = prefs.getString("owner_phoneNumber", null)
 
-                    val (userCC, userNN) = splitNumber(dialedNum ?: ownerNumber, context)
+                    // Priority: app-entered number > SIM number
+                    // (JIO SIM returns 919663210246 which corrupts the number — always trust the app-set number first)
+                    val (userCC, userNN) = splitNumber(ownerNumber ?: dialedNum, context)
+
                     val (custCC, custNN) = splitNumber(number, context)
 
                     val entity = CallDataEntity(
