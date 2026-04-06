@@ -6,248 +6,249 @@
     android:layout_height="match_parent"
     android:background="#F4F7FC"
     android:fillViewport="true"
-    tools:ignore="VisualLintButtonSize,VisualLintLongText">
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="32dp"
+    tools:ignore="VisualLintButtonSize,VisualLintLongText"
     tools:context=".MainActivity">
 
-    <!-- SalesTrail Inspired Header Gradient Background -->
-    <View
-        android:id="@+id/headerBackground"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:background="@drawable/header_gradient"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvAppTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:layout_marginStart="24dp"
-        android:text="@string/app_name"
-        android:textColor="#FFFFFF"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:letterSpacing="-0.02"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvAppSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="24dp"
-        android:text="@string/app_subtitle"
-        android:textColor="#E0E7FF"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAppTitle" />
-
-    <!-- App Owner Profile Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardProfile"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:strokeWidth="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tvAppSubtitle">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Header Gradient Background -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:background="@drawable/header_gradient"
+            android:paddingTop="56dp"
+            android:paddingBottom="32dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="App Owner Profile"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_text" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilOwnerNumber"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="Your Phone Number (e.g. +919000012345)"
-                app:startIconDrawable="@android:drawable/ic_menu_call">
+                android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etOwnerNumber"
+                <TextView
+                    android:id="@+id/tvAppTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="#FFFFFF"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="-0.02" />
+
+                <TextView
+                    android:id="@+id/tvAppSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/app_subtitle"
+                    android:textColor="#E0E7FF"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- App Owner Profile Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="App Owner Profile"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_text" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilOwnerNumber"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="12dp"
+                    android:hint="Your Phone Number (e.g. +919000012345)"
+                    app:startIconDrawable="@android:drawable/ic_menu_call">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSaveProfile"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="12dp"
-                android:text="Verify &amp; Save Number"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/blue_primary" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etOwnerNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Main Card containing permissions -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardPermissions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:strokeWidth="0dp"
-        app:layout_constraintTop_toBottomOf="@id/cardProfile">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Verify &amp; Save Number"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/blue_primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
+        <!-- Main Card containing permissions -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardPermissions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:strokeWidth="0dp">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@android:drawable/ic_secure"
-                app:tint="@color/blue_primary"
-                android:contentDescription="@string/desc_security_icon"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/setup_required"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_text" />
-
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:lineSpacingExtra="4dp"
-                android:text="@string/setup_desc"
-                android:textColor="@color/gray_text"
-                android:textSize="15sp" />
+                android:orientation="vertical"
+                android:padding="24dp">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="20dp"
-                android:background="#E5E7EB" />
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_secure"
+                    app:tint="@color/blue_primary"
+                    android:contentDescription="@string/desc_security_icon"
+                    android:layout_marginBottom="16dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGrantPermissions"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="@string/btn_enable_core"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/blue_primary" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/setup_required"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_text" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGrantNotificationAccess"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="12dp"
-                android:text="@string/btn_enable_wa"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/blue_secondary"
-                app:cornerRadius="12dp"
-                app:strokeColor="@color/blue_secondary" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@string/setup_desc"
+                    android:textColor="@color/gray_text"
+                    android:textSize="15sp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGrantAccessibility"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="12dp"
-                android:text="Enable Accessibility Elevation"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_text"
-                app:cornerRadius="12dp"
-                app:strokeColor="@color/dark_text" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#E5E7EB" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnViewAnalytics"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="24dp"
-                android:text="View Analytics Dashboard"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:icon="@android:drawable/ic_menu_today"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/blue_primary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGrantPermissions"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/btn_enable_core"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/blue_primary" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnViewHistory"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="12dp"
-                android:text="View Call Vault History"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/blue_dark_surface" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGrantNotificationAccess"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/btn_enable_wa"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blue_secondary"
+                    app:cornerRadius="12dp"
+                    app:strokeColor="@color/blue_secondary" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogout"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Logout from Callytics"
-                android:textColor="#9CA3AF"
-                android:textAllCaps="false" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGrantAccessibility"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Enable Accessibility Elevation"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_text"
+                    app:cornerRadius="12dp"
+                    app:strokeColor="@color/dark_text" />
 
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewAnalytics"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="24dp"
+                    android:text="View Analytics Dashboard"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:icon="@android:drawable/ic_menu_today"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/blue_primary" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnViewHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
+                    android:text="View Call Vault History"
+                    android:textAllCaps="false"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/blue_dark_surface" />
 
-    <!-- Footer Security Notice -->
-    <TextView
-        android:id="@+id/tvFooterSecurity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:text="@string/footer_security"
-        android:textColor="#6B7280"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardPermissions"
-        app:layout_constraintVertical_bias="0.9" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLogout"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Logout from Callytics"
+                    android:textColor="#9CA3AF"
+                    android:textAllCaps="false" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Footer Security Notice -->
+        <TextView
+            android:id="@+id/tvFooterSecurity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="40dp"
+            android:gravity="center"
+            android:text="@string/footer_security"
+            android:textColor="#6B7280"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
